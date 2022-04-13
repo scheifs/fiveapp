@@ -1,5 +1,5 @@
 async function login(emailAddress, password) {
-
+    
     console.log(`logging on with ${emailAddress} and ${password}`);
     const response = await fetch('http://localhost:8080/api/users', {
         method: 'POST',
@@ -13,10 +13,10 @@ async function login(emailAddress, password) {
     });
 
     if (response.ok) {
-        console.log('got response');
-        console.log(await response.json());
+        return await response.json();
+    } else {
+        throw 'error during login'
     } 
-    
 
 }
 

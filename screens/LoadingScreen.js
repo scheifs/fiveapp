@@ -12,10 +12,7 @@ function LoadingScreen({ updateScreen, getData }) {
         console.log('useeffect');
         const response = await loginService.login(myData.emailAddress, myData.password);
 
-        setTimeout(() => {
-            updateScreen('Login');
-        }, 1000);
-
+        updateScreen('GameList');
 
     }, []);
 

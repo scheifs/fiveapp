@@ -6,15 +6,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 function LoginScreen({ updateScreen }) {
 
     const radioButtons = [
-        {
-            key: 'New User',
-            text: 'New User',
-            default: true
-        },
-        {
-            key: 'Existing User',
-            text: 'Existing User',
-        }
+        { key: 'New User', text: 'New User', default: true },
+        { key: 'Existing User', text: 'Existing User' }
     ];
 
 
@@ -32,7 +25,7 @@ function LoginScreen({ updateScreen }) {
 
     function onSubmitHandler() {
         console.log(`onSubmitHandler ${emailAddress} ${password}`);
-        updateScreen('Loading', { emailAddress, password});
+        updateScreen('Loading', { emailAddress, password });
     }
 
     function onClearHandler() {
