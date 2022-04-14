@@ -1,6 +1,5 @@
 import { View, Text, Button, StyleSheet } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import TabBar from '../components/tab-bar';
 
 // Number of Players: <DropDown>
 
@@ -26,10 +25,6 @@ function NewGameScreen() {
             <View>
                 <Button title='Start Game' />
 
-            </View>
-
-            <View>
-               <TabBar />
             </View>
 
         </LinearGradient>

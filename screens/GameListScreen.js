@@ -1,6 +1,5 @@
 import { View, Text, StyleSheet, Button } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import TabBar from '../components/tab-bar';
 
 function GameListScreen() {
 
@@ -8,12 +7,6 @@ function GameListScreen() {
         <LinearGradient colors={['#4c669f', 'purple']} style={styles.linearGradient}>
             <View style={styles.gameListContainer}>
                 <Text>game list screen</Text>
-            </View>
-            <View style={styles.buttonContainer}>
-                <Button title="New Game" />
-            </View>
-            <View>
-                <TabBar />
             </View>
         </LinearGradient>
     )
@@ -24,7 +17,9 @@ const styles = StyleSheet.create({
     linearGradient: {
         flex: 1,
         width: '100%',
-        height: '100%'
+        height: '100%',
+        justifyContent: 'center',
+        alignItems: 'center'
     },
     gameListContainer: {
         flex: 1
