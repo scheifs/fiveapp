@@ -1,13 +1,15 @@
-import { MMKV } from 'react-native-mmkv';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-let storage = new MMKV()
-
-function get(key) {
-
+async function get(key) {
+    return await AsyncStorage.getItem(key);
 }
 
-function set(key, value) {
-
+async function set(key, value) {
+   return await AsyncStorage.setItem(key, value);
 }
 
-export { get, set }
+async function removeItem(key) {
+    return await AsyncStorage.removeItem(key);
+}
+
+export { get, set, removeItem }

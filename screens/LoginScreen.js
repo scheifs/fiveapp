@@ -1,19 +1,20 @@
-import { View, StyleSheet, TextInput, Button, Image } from 'react-native';
-import { useState } from 'react';
-import RadioButton from '../components/radio-button';
+import { View, StyleSheet, TextInput, Button, Image, ActivityIndicator, Alert } from 'react-native';
+import { useState, useEffect } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
+import * as loginService from '../services/login-service';
+import * as storageService from '../services/storage-service';
 
-function LoginScreen({ updateScreen }) {
+function LoginScreen({ setIsLoggedIn }) {
 
-    const radioButtons = [
-        { key: 'New User', text: 'New User', default: true },
-        { key: 'Existing User', text: 'Existing User' }
-    ];
-
-
-    const [enterButtonText, setEnterButtonText] = useState('Register');
     const [emailAddress, setEmailAddress] = useState(`${Date.now()}@test.com`);
     const [password, setPassword] = useState('');
+    const [loading, setLoading] = useState(false);
+
+    // useEffect(() => {
+
+
+
+    // }, [loading])
 
     function onEmailInputChanage(text) {
         setEmailAddress(text);
@@ -23,37 +24,11 @@ function LoginScreen({ updateScreen }) {
         setPassword(text);
     }
 
-    function onSubmitHandler() {
-        console.log(`onSubmitHandler ${emailAddress} ${password}`);
-        updateScreen('Loading', { emailAddress, password });
-    }
-
-    function onClearHandler() {
-        setPassword('');
-        setEmailAddress('');
-    }
-
-    function selectedRadio(text) {
-        console.log('login screen', text);
-        if (text === 'Existing User') {
-            setEnterButtonText('Login');
+    function showContent() {
+        if (loading) {
+            return <ActivityIndicator size='large' />
         } else {
-            setEnterButtonText('Register');
-        }
-    }
-
-    return (
-        <LinearGradient
-            colors={['#4c669f', 'purple']}
-            style={styles.linearGradient}>
-
-            <View style={styles.imageContainer}>
-                <Image style={styles.image} source={require('../assets/icon.png')} />
-            </View>
-            <View style={styles.radioButtonContainer}>
-                <RadioButton selectedRadio={selectedRadio} PROP={radioButtons} />
-            </View>
-            <View style={styles.textInputContainer}>
+            return <><View style={styles.textInputContainer}>
                 <TextInput
                     style={styles.textInput}
                     placeholder='Enter your email address'
@@ -70,25 +45,57 @@ function LoginScreen({ updateScreen }) {
                     value={password}
                     onChangeText={onPasswordInputChanage} />
             </View>
-            <View style={styles.buttonsContainer}>
-                <View style={styles.button}>
-                    <Button onPress={onClearHandler} title='Clear' />
-                </View>
-                <View style={styles.button}>
-                    <Button onPress={onSubmitHandler} title={enterButtonText} />
-                </View>
+                <View style={styles.buttonsContainer}>
+                    <View style={styles.button}>
+                        <Button color='blue' onPress={onClearHandler} title='Clear' />
+                    </View>
+                    <View style={styles.button}>
+                        <Button color='blue' onPress={onSubmitHandler} title='Submit' />
+                    </View>
+                </View></>
+        }
+    }
+
+    async function onSubmitHandler() {
+
+        console.log(`onSubmitHandler ${emailAddress} ${password}`);
+        setLoading(() => true);
+
+        try {
+            const data = await loginService.login(emailAddress, password);
+            console.log(data);
+            await storageService.set('user', JSON.stringify(data));
+            setIsLoggedIn(() => true);
+        } catch (err) {
+            setLoading(() => false);
+        }
+
+    }
+
+    function onClearHandler() {
+        setPassword('');
+        setEmailAddress('');
+    }
+
+    return (
+        <LinearGradient
+            colors={['#4c669f', 'purple']}
+            style={styles.linearGradient}>
+
+            <View style={styles.imageContainer}>
+                <Image style={styles.image} source={require('../assets/icon.png')} />
             </View>
+            {showContent()}
+
         </LinearGradient>
     )
 }
 
 const styles = StyleSheet.create({
-    radioButtonContainer: {
-        marginTop: 25
-    },
     imageContainer: {
         alignItems: 'center',
-        marginTop: 25
+        marginTop: 75,
+        marginBottom: 50
     },
     image: {
         width: 400,
@@ -113,11 +120,14 @@ const styles = StyleSheet.create({
     buttonsContainer: {
         marginTop: 8,
         flexDirection: 'row',
-        justifyContent: 'center'
+        justifyContent: 'center',
     },
     button: {
         marginHorizontal: 10,
     },
+    activityIndicatorContainer: {
+        marginTop: 32
+    }
 })
 
 export default LoginScreen;
