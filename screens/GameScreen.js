@@ -1,4 +1,3 @@
-import * as Svg from 'react-native-svg';
 import { View, Text, StyleSheet, Button, Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useState, useLayoutEffect, useEffect } from 'react';
@@ -6,7 +5,7 @@ import GameSquareButton from '../components/GameSquareButton';
 
 function GameScreen() {
 
-    const board = [
+    let board = [
         [
             { x: 0, y: 0, num: 1 },
             { x: 1, y: 0, num: 2 },
@@ -158,8 +157,8 @@ function GameScreen() {
 
         return (
             <View style={{ flex: 1 }}>
-                <View style={[styles.boardRowContainer]}>{drawRow(0)}</View>
-                <View style={[styles.boardRowContainer, { backgroundColor: 'blue' }]}>{drawRow(1)}</View>
+                <View style={styles.boardRowContainer}>{drawRow(0)}</View>
+                <View style={styles.boardRowContainer}>{drawRow(1)}</View>
                 <View style={styles.boardRowContainer}>{drawRow(2)}</View>
                 <View style={styles.boardRowContainer}>{drawRow(3)}</View>
                 <View style={styles.boardRowContainer}>{drawRow(4)}</View>
