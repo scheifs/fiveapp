@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, View, Text } from 'react-native';
 import LoginScreen from './screens/LoginScreen';
 import GameListScreen from './screens/GameListScreen';
 import NewGameScreen from './screens/NewGameScreen';
@@ -52,11 +52,13 @@ export default function App() {
   }
 
   return (
-    <>    <StatusBar />
+    <>
+      <StatusBar />
       <NavigationContainer>
-        <MyTabs />
+        {MyTabs()}
       </NavigationContainer>
     </>
+    
   );
 }
 
