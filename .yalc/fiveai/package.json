@@ -1,0 +1,13 @@
+{
+  "name": "fiveai",
+  "version": "1.0.1",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "jest --coverage"
+  },
+  "author": "",
+  "license": "ISC",
+  "yalcSig": "2927766cd42bd4388f0ff360dfaf2d4c"
+}

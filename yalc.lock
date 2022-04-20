@@ -1,0 +1,9 @@
+{
+  "version": "v1",
+  "packages": {
+    "fiveai": {
+      "signature": "2927766cd42bd4388f0ff360dfaf2d4c",
+      "file": true
+    }
+  }
+}

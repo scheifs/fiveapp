@@ -24,7 +24,9 @@ const styles = StyleSheet.create({
         height: '100%'
     },
     pressableContainer: {
-        height: '100%'
+        height: '100%',
+        paddingLeft: 1,
+        paddingBottom: 1
     },
     textContainer: {
         fontSize: 22

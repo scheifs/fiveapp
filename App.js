@@ -1,8 +1,7 @@
-import { StatusBar, } from 'expo-status-bar';
-import { StyleSheet, Text } from 'react-native';
+import { StyleSheet, Text, SafeAreaView, Platform, StatusBar } from 'react-native';
 import GameListScreen from './screens/GameListScreen';
 import NewGameScreen from './screens/NewGameScreen';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -17,17 +16,19 @@ export default function App() {
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
+  console.log(`Platform: ${Platform.OS} Status Bar Height: ${StatusBar.currentHeight}`)
+
   return (
     <>
-      <StatusBar />
       <NavigationContainer>
+        <StatusBar barStyle='dark-content' />
         <Tab.Navigator
           screenOptions={{
             tabBarStyle: {
-              backgroundColor: 'gray'
+              backgroundColor: 'white'
             },
           }}>
-            <Tab.Screen options={{
+          <Tab.Screen options={{
             headerShown: false,
             // tabBarStyle: {
             //   display: 'none'
