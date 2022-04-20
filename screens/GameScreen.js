@@ -11,9 +11,9 @@ function GameScreen() {
 
     const [timestamp, setTimestamp] = useState(Date.now())
     const [game, setGame] = useState(null);
-    const [cards, setCards] = useState(null);
     const [alertMessage, setAlertMessage] = useState(null);
     const [selectedCard, setSelectedCard] = useState(null);
+    const [playerIndex, setPlayerIndex] = useState(0);
 
     if (game === null) {
         const startGameOptions = {
@@ -24,8 +24,6 @@ function GameScreen() {
         }
         const newGame = gameService.startGame(startGameOptions);
         setGame(newGame);
-        const newCards = gameService.getPlayer(newGame, 1).cards;
-        setCards(newCards);
         setTimestamp(Date.now());
     }
 
@@ -37,7 +35,7 @@ function GameScreen() {
             setAlertMessage(move);
             setSelectedCard(null);
         } else if (card === 'Draw') {
-            if (cards.length === 4) {
+            if (game.players[playerIndex].cards.length === 4) {
                 setAlertMessage("Can't draw with 4 cards")
                 setTimestamp(Date.now())
                 setSelectedCard(null);
@@ -46,10 +44,6 @@ function GameScreen() {
                     playerId: 1,
                     move: 'Draw'
                 })
-                setCards(() => {
-                    console.log(`Updated cards`, game.players[0].cards);
-                    return game.players[0].cards;
-                });
                 setGame(game);
                 setAlertMessage(null);
                 setSelectedCard(null);
@@ -70,7 +64,6 @@ function GameScreen() {
             gameService.processMove(game, { move: 'Play', playerId: 1, card: selectedCard, boardNumber: boardNum });
             console.log(`game after move ${JSON.stringify(game?.board)}`);
             setGame(game);
-            setCards(gameService.getPlayer(game, 1).cards);
             setAlertMessage(null);
             setSelectedCard(null);
         }
@@ -117,7 +110,7 @@ function GameScreen() {
             cards.forEach(card => {
                 myCards = myCards + card + ', ';
             })
-            myCards = myCards.substring(0,myCards.length-2) + ']';
+            myCards = myCards.substring(0, myCards.length - 2) + ']';
             return myCards;
         }
 
@@ -128,8 +121,8 @@ function GameScreen() {
         return (
             <View style={styles.infoContainer}>
                 {game?.players.map(player => {
-                return (
-                    <Text>{player.color} - {player.nickname} - {prettyPrintCards(player.cards)}</Text>)
+                    return (
+                        <Text>{player.color} - {player.nickname} - {prettyPrintCards(player.cards)}</Text>)
                 })}
             </View>)
 
@@ -140,20 +133,48 @@ function GameScreen() {
         console.log(`redrawing board ${Date.now()}`)
 
         return (
-            <View style={{ flex: 1 }}>
-                <View key="row0" style={styles.boardRowContainer}>{drawRow(0)}</View>
-                <View key="row1" style={styles.boardRowContainer}>{drawRow(1)}</View>
-                <View key="row2" style={styles.boardRowContainer}>{drawRow(2)}</View>
-                <View key="row3" style={styles.boardRowContainer}>{drawRow(3)}</View>
-                <View key="row4" style={styles.boardRowContainer}>{drawRow(4)}</View>
-                <View key="row5" style={styles.boardRowContainer}>{drawRow(5)}</View>
-                <View key="row6" style={styles.boardRowContainer}>{drawRow(6)}</View>
-                <View key="row7" style={styles.boardRowContainer}>{drawRow(7)}</View>
-                <View key="row8" style={styles.boardRowContainer}>{drawRow(8)}</View>
-                <View key="row9" style={styles.boardRowContainer}>{drawRow(9)}</View>
+            <View style={styles.boardContainer}>
+                <View style={{ flex: 1 }}>
+                    <View key="row0" style={styles.boardRowContainer}>{drawRow(0)}</View>
+                    <View key="row1" style={styles.boardRowContainer}>{drawRow(1)}</View>
+                    <View key="row2" style={styles.boardRowContainer}>{drawRow(2)}</View>
+                    <View key="row3" style={styles.boardRowContainer}>{drawRow(3)}</View>
+                    <View key="row4" style={styles.boardRowContainer}>{drawRow(4)}</View>
+                    <View key="row5" style={styles.boardRowContainer}>{drawRow(5)}</View>
+                    <View key="row6" style={styles.boardRowContainer}>{drawRow(6)}</View>
+                    <View key="row7" style={styles.boardRowContainer}>{drawRow(7)}</View>
+                    <View key="row8" style={styles.boardRowContainer}>{drawRow(8)}</View>
+                    <View key="row9" style={styles.boardRowContainer}>{drawRow(9)}</View>
+                </View>
             </View>
         )
 
+    }
+
+    function drawCards() {
+
+        return (
+            <View style={styles.buttonsContainer}>
+                <View style={styles.buttonContainer}>
+                    {game?.players[playerIndex].cards.length >= 1 && <GameSquareButton height={35} onPress={cardButtonHandler} color="#4c669f">{game.players[playerIndex].cards[0]}</GameSquareButton>}
+                </View>
+                <View style={styles.buttonContainer}>
+                    {game?.players[playerIndex].cards.length >= 2 && <GameSquareButton height={35} onPress={cardButtonHandler} color="#4c669f">{game.players[playerIndex].cards[1]}</GameSquareButton>}
+                </View>
+                <View style={styles.buttonContainer}>
+                    {game?.players[playerIndex].cards.length >= 3 && <GameSquareButton height={35} onPress={cardButtonHandler} color="#4c669f">{game.players[playerIndex].cards[2]}</GameSquareButton>}
+                </View>
+                <View style={styles.buttonContainer}>
+                    {game?.players[playerIndex].cards.length >= 4 && <GameSquareButton height={35} onPress={cardButtonHandler} color="#4c669f">{game.players[playerIndex].cards[3]}</GameSquareButton>}
+                </View>
+                <View style={styles.buttonContainer}>
+                    <GameSquareButton height={35} onPress={cardButtonHandler} color="#4c669f">Draw</GameSquareButton>
+                </View>
+                <View style={styles.buttonContainer}>
+                    <GameSquareButton height={35} onPress={cardButtonHandler} color="#4c669f">Hint</GameSquareButton>
+                </View>
+            </View>
+        );
     }
 
     return (
@@ -166,31 +187,8 @@ function GameScreen() {
             />
 
             {drawInformation()}
-
-            <View style={styles.boardContainer}>
-                {drawBoard()}
-            </View>
-
-            <View style={styles.buttonsContainer}>
-                <View style={styles.buttonContainer}>
-                    {cards?.length >= 1 && <GameSquareButton height={35} onPress={cardButtonHandler} color="#4c669f">{cards[0]}</GameSquareButton>}
-                </View>
-                <View style={styles.buttonContainer}>
-                    {cards?.length >= 2 && <GameSquareButton height={35} onPress={cardButtonHandler} color="#4c669f">{cards[1]}</GameSquareButton>}
-                </View>
-                <View style={styles.buttonContainer}>
-                    {cards?.length >= 3 && <GameSquareButton height={35} onPress={cardButtonHandler} color="#4c669f">{cards[2]}</GameSquareButton>}
-                </View>
-                <View style={styles.buttonContainer}>
-                    {cards?.length === 4 && <GameSquareButton height={35} onPress={cardButtonHandler} color="#4c669f">{cards[3]}</GameSquareButton>}
-                </View>
-                <View style={styles.buttonContainer}>
-                    <GameSquareButton height={35} onPress={cardButtonHandler} color="#4c669f">Draw</GameSquareButton>
-                </View>
-                <View style={styles.buttonContainer}>
-                    <GameSquareButton height={35} onPress={cardButtonHandler} color="#4c669f">Hint</GameSquareButton>
-                </View>
-            </View>
+            {drawBoard()}
+            {drawCards()}
 
         </LinearGradient>
     )
