@@ -14,6 +14,7 @@ function GameScreen() {
     const [alertMessage, setAlertMessage] = useState(null);
     const [selectedCard, setSelectedCard] = useState(null);
     const [playerIndex, setPlayerIndex] = useState(0);
+    const [playerId, setPlayerId] = useState(1);
 
     if (game === null) {
         const startGameOptions = {
@@ -30,7 +31,8 @@ function GameScreen() {
     function cardButtonHandler(card) {
         console.log(`you clicked "${card}"`)
         if (card === 'Hint') {
-            const move = fiveai.getMove(game, 1);
+            console.log(JSON.stringify(game.players, null, 4));
+            const move = fiveai.getMove(game, playerId);
             console.log(`AI hint ${JSON.stringify(move)}`)
             setAlertMessage(move);
             setSelectedCard(null);
@@ -41,7 +43,7 @@ function GameScreen() {
                 setSelectedCard(null);
             } else {
                 gameService.processMove(game, {
-                    playerId: 1,
+                    playerId: playerId,
                     move: 'Draw'
                 })
                 setGame(game);
@@ -60,14 +62,12 @@ function GameScreen() {
     function boardNumberHandler(boardNum) {
 
         console.log(`Move: Card ${selectedCard} Board Number: ${boardNum}`);
-        if (selectedCard) {
-            gameService.processMove(game, { move: 'Play', playerId: 1, card: selectedCard, boardNumber: boardNum });
-            console.log(`game after move ${JSON.stringify(game?.board)}`);
+        if (selectedCard !== null) {
+            gameService.processMove(game, { move: 'Play', playerId: playerId, card: selectedCard, boardNumber: boardNum });
             setGame(game);
             setAlertMessage(null);
             setSelectedCard(null);
         }
-
     }
 
     function getAlertMessage(hint) {
@@ -118,13 +118,16 @@ function GameScreen() {
 
     function drawInformation() {
 
-        return (
+        return (<>
             <View style={styles.infoContainer}>
                 {game?.players.map(player => {
                     return (
-                        <Text>{player.color} - {player.nickname} - {prettyPrintCards(player.cards)}</Text>)
+                        <Text key={player.playerId}>{player.playerId} - {player.color} - {player.nickname} - {prettyPrintCards(player.cards)}</Text>)
                 })}
-            </View>)
+            </View>
+            <View style={styles.infoContainer}>
+                <Text>PlayersIdTurn: {game?.playersTurnId}</Text>
+            </View></>)
 
     }
 

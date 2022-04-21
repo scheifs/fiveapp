@@ -1,3 +1,5 @@
+import * as fiveai from 'fiveai';
+
 const __emptyBoard__ = [
     [{ num: 73, x: 0, y: 0 },
     { num: 72, x: 1, y: 0 },
@@ -154,20 +156,29 @@ function getPlayer(game, playerId) {
 }
 
 function removeCardFromPlayer(player, playedCard) {
-    console.log(`Removing ${playedCard} from `, player)
-    return player.cards.filter((card) => {
+    const updatedCards = player.cards.filter((card) => {
         if (card !== playedCard) {
             return true;
         }
     });
+    player.cards = updatedCards;
 }
 
-function drawCard(game, playerId) {
+function drawCard(game, player) {
     const cardToDraw = game.deck.pop();
     console.log(`Card to draw: ${cardToDraw}`)
-    console.log(game.players[0])
-    game.players[0].cards.push(cardToDraw);
+    player.cards.push(cardToDraw);
     return cardToDraw;
+}
+
+function updatePlayersTurn(game, currentPlayerIdTurn) {
+    
+    if (currentPlayerIdTurn + 1 > game.players.length) {
+        game.playersTurnId = 1;
+    } else {
+        game.playersTurnId = currentPlayerIdTurn + 1;
+    }
+    console.log(`updating from ${currentPlayerIdTurn} to ${game.playersTurnId}`);
 }
 
 // {
@@ -182,22 +193,42 @@ function drawCard(game, playerId) {
 //     boardNumber: movePayload.boardNumber
 // })
 
+function forceAImove(game) {
+
+    // let done = false;
+    // while (!done) {
+        console.log('ForceAIMove for playerId', game.playersTurnId);
+        const player = getPlayer(game, game.playersTurnId);
+        if (player) {
+            console.log(`ForceAIMove `, player)
+            if (player.nickname === 'AI') {
+                const move = fiveai.getMove(game, game.playersTurnId);
+                console.log(`AI should move ${JSON.stringify(move)}`);
+                processMove(game, move);
+            } 
+            updatePlayersTurn(game, game.playersTurnId);
+        }
+        
+    //     done = true;
+    // }
+    
+
+}
+
 function processMove(game, { playerId, move, card, boardNumber }) {
 
+    console.log(`Process move for playerId: ${playerId} ${move} ${card} ${boardNumber}`);
+    const player = getPlayer(game, playerId);
     if (move === 'Play') {
-
-        const player = getPlayer(game, playerId);
         const color = player.color;
         updateBoard(game, boardNumber, color);
-        const updatedPlayedCards = removeCardFromPlayer(player, card);
-        game.players[0].cards = updatedPlayedCards;
-        return game;
-
+        removeCardFromPlayer(player, card);
     } else if (move === 'Draw') {
-
-        return drawCard(game, 1);
-        
+        drawCard(game, player);
     }
+    updatePlayersTurn(game, playerId);
+    forceAImove(game);
+    return game;
 
 }
 
