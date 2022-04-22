@@ -172,13 +172,13 @@ function drawCard(game, player) {
 }
 
 function updatePlayersTurn(game, currentPlayerIdTurn) {
-    
+
     if (currentPlayerIdTurn + 1 > game.players.length) {
         game.playersTurnId = 1;
     } else {
         game.playersTurnId = currentPlayerIdTurn + 1;
     }
-    console.log(`updating from ${currentPlayerIdTurn} to ${game.playersTurnId}`);
+    console.log(`updating from players turn from ${currentPlayerIdTurn} to ${game.playersTurnId}`);
 }
 
 // {
@@ -199,19 +199,14 @@ function forceAImove(game) {
     // while (!done) {
         console.log('ForceAIMove for playerId', game.playersTurnId);
         const player = getPlayer(game, game.playersTurnId);
-        if (player) {
-            console.log(`ForceAIMove `, player)
-            if (player.nickname === 'AI') {
-                const move = fiveai.getMove(game, game.playersTurnId);
-                console.log(`AI should move ${JSON.stringify(move)}`);
-                processMove(game, move);
-            } 
-            updatePlayersTurn(game, game.playersTurnId);
+        if (player.nickname === 'AI') {
+            const move = fiveai.getMove(game, game.playersTurnId);
+            processMove(game, move);
+        } else {
+            // done = true;
+            console.log(`ForceAIMove done as ${player.nickname} is not an AI`)
         }
-        
-    //     done = true;
     // }
-    
 
 }
 

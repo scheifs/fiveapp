@@ -3,17 +3,15 @@ import { useState, useEffect } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as loginService from '../services/login-service';
 import * as storageService from '../services/storage-service';
+import AwesomeAlert from 'react-native-awesome-alerts';
 
 function LoginScreen({ setIsLoggedIn }) {
 
     const [emailAddress, setEmailAddress] = useState(`${Date.now()}@test.com`);
-    const [password, setPassword] = useState('');
+    const [password, setPassword] = useState(`${Date.now()}`);
     const [loading, setLoading] = useState(false);
 
     // useEffect(() => {
-
-
-
     // }, [loading])
 
     function onEmailInputChanage(text) {
@@ -25,10 +23,9 @@ function LoginScreen({ setIsLoggedIn }) {
     }
 
     function showContent() {
-        if (loading) {
-            return <ActivityIndicator size='large' />
-        } else {
-            return <><View style={styles.textInputContainer}>
+
+        return (<>
+            <View style={styles.textInputContainer}>
                 <TextInput
                     style={styles.textInput}
                     placeholder='Enter your email address'
@@ -45,15 +42,15 @@ function LoginScreen({ setIsLoggedIn }) {
                     value={password}
                     onChangeText={onPasswordInputChanage} />
             </View>
-                <View style={styles.buttonsContainer}>
-                    <View style={styles.button}>
-                        <Button color='blue' onPress={onClearHandler} title='Clear' />
-                    </View>
-                    <View style={styles.button}>
-                        <Button color='blue' onPress={onSubmitHandler} title='Submit' />
-                    </View>
-                </View></>
-        }
+            <View style={styles.buttonsContainer}>
+                <View style={styles.button}>
+                    <Button color='blue' onPress={onClearHandler} title='Clear' />
+                </View>
+                <View style={styles.button}>
+                    <Button color='blue' onPress={onSubmitHandler} title='Submit' />
+                </View>
+            </View></>)
+
     }
 
     async function onSubmitHandler() {
@@ -67,6 +64,7 @@ function LoginScreen({ setIsLoggedIn }) {
             await storageService.set('user', JSON.stringify(data));
             setIsLoggedIn(() => true);
         } catch (err) {
+            console.log(err);
             setLoading(() => false);
         }
 
@@ -85,8 +83,8 @@ function LoginScreen({ setIsLoggedIn }) {
             <View style={styles.imageContainer}>
                 <Image style={styles.image} source={require('../assets/icon.png')} />
             </View>
-            {showContent()}
-
+            {loading? <ActivityIndicator size="large" color="black"/> : showContent()}
+            
         </LinearGradient>
     )
 }

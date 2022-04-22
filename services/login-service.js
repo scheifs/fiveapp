@@ -1,7 +1,7 @@
 async function login(emailAddress, password) {
     
     console.log(`logging on with ${emailAddress} and ${password}`);
-    const response = await fetch('http://localhost:8080/api/users', {
+    const response = await fetch('http://10.0.0.138:8080/api/users', {
         method: 'POST',
         body: JSON.stringify({
             email: emailAddress,
@@ -12,8 +12,12 @@ async function login(emailAddress, password) {
         }
     });
 
+    console.log('raw response', response);
+
     if (response.ok) {
-        return await response.json();
+        const responseJson = await response.json();
+        console.log(`Login Response: `, responseJson);
+        return responseJson;
     } else {
         throw 'error during login'
     } 
@@ -35,7 +39,9 @@ async function registerNewUser(emailAddress, password) {
     });
 
     if (response.ok) {
-        return await response.json();
+        const responseJson = await response.json();
+        console.log(`Login Response: `, responseJson);
+        return responseJson;
     } else {
         throw 'error during login'
     } 

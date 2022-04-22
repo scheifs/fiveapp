@@ -13,14 +13,14 @@ function GameScreen() {
     const [game, setGame] = useState(null);
     const [alertMessage, setAlertMessage] = useState(null);
     const [selectedCard, setSelectedCard] = useState(null);
-    const [playerIndex, setPlayerIndex] = useState(0);
     const [playerId, setPlayerId] = useState(1);
 
     if (game === null) {
         const startGameOptions = {
             players: [
-                { playerId: 1, nickname: 'scheifs', color: 'blue' },
-                { playerId: 2, nickname: 'AI', color: 'orange' }
+                { playerId: 1, nickname: 'scheifs', color: 'skyblue' },
+                { playerId: 2, nickname: 'AI', color: 'orange' },
+                { playerId: 3, nickname: 'AI', color: 'teal' }
             ]
         }
         const newGame = gameService.startGame(startGameOptions);
@@ -29,7 +29,6 @@ function GameScreen() {
     }
 
     function cardButtonHandler(card) {
-        console.log(`you clicked "${card}"`)
         if (card === 'Hint') {
             console.log(JSON.stringify(game.players, null, 4));
             const move = fiveai.getMove(game, playerId);
@@ -37,7 +36,7 @@ function GameScreen() {
             setAlertMessage(move);
             setSelectedCard(null);
         } else if (card === 'Draw') {
-            if (game.players[playerIndex].cards.length === 4) {
+            if (game.players[playerId-1].cards.length === 4) {
                 setAlertMessage("Can't draw with 4 cards")
                 setTimestamp(Date.now())
                 setSelectedCard(null);
@@ -159,16 +158,16 @@ function GameScreen() {
         return (
             <View style={styles.buttonsContainer}>
                 <View style={styles.buttonContainer}>
-                    {game?.players[playerIndex].cards.length >= 1 && <GameSquareButton height={35} onPress={cardButtonHandler} color="#4c669f">{game.players[playerIndex].cards[0]}</GameSquareButton>}
+                    {game?.players[playerId-1].cards.length >= 1 && <GameSquareButton height={35} onPress={cardButtonHandler} color="#4c669f">{game.players[playerId-1].cards[0]}</GameSquareButton>}
                 </View>
                 <View style={styles.buttonContainer}>
-                    {game?.players[playerIndex].cards.length >= 2 && <GameSquareButton height={35} onPress={cardButtonHandler} color="#4c669f">{game.players[playerIndex].cards[1]}</GameSquareButton>}
+                    {game?.players[playerId-1].cards.length >= 2 && <GameSquareButton height={35} onPress={cardButtonHandler} color="#4c669f">{game.players[playerId-1].cards[1]}</GameSquareButton>}
                 </View>
                 <View style={styles.buttonContainer}>
-                    {game?.players[playerIndex].cards.length >= 3 && <GameSquareButton height={35} onPress={cardButtonHandler} color="#4c669f">{game.players[playerIndex].cards[2]}</GameSquareButton>}
+                    {game?.players[playerId-1].cards.length >= 3 && <GameSquareButton height={35} onPress={cardButtonHandler} color="#4c669f">{game.players[playerId-1].cards[2]}</GameSquareButton>}
                 </View>
                 <View style={styles.buttonContainer}>
-                    {game?.players[playerIndex].cards.length >= 4 && <GameSquareButton height={35} onPress={cardButtonHandler} color="#4c669f">{game.players[playerIndex].cards[3]}</GameSquareButton>}
+                    {game?.players[playerId-1].cards.length >= 4 && <GameSquareButton height={35} onPress={cardButtonHandler} color="#4c669f">{game.players[playerId-1].cards[3]}</GameSquareButton>}
                 </View>
                 <View style={styles.buttonContainer}>
                     <GameSquareButton height={35} onPress={cardButtonHandler} color="#4c669f">Draw</GameSquareButton>
