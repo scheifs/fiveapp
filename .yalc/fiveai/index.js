@@ -14,10 +14,10 @@ function getMove(game, playerId) {
     } else {
 
         const allPossibleMoves = boardService.getAllPossibleMoves(game, playerId);
-        // console.log(`AI: Number of possible moves: ${allPossibleMoves.length}`);
+        console.log(`AI: Number of possible moves: ${allPossibleMoves.length}`);
         
-        const randomNumber = Math.floor(Math.random() * (50 - 0) + 0);
-        // console.log(`AI: Random number: ${randomNumber}`)
+        const randomNumber = Math.floor(Math.random() * allPossibleMoves.length);
+        console.log(`AI: Random number: ${randomNumber}`)
 
         const selectedMove = allPossibleMoves[randomNumber];
         console.log(`AI: Selected Move: ${JSON.stringify(selectedMove)}`);

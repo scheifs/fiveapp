@@ -1,32 +1,24 @@
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, FlatList } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useRef, useState, useLayoutEffect, useEffect } from 'react';
+import { useState } from 'react';
 import GameSquareButton from '../components/GameSquareButton';
 import * as fiveai from 'fiveai';
 import AwesomeAlert from 'react-native-awesome-alerts';
 import * as gameService from '../services/game-service';
+import { useRoute } from '@react-navigation/native';
 
 
 function GameScreen() {
 
+    const route = useRoute();
+
+    console.log(`***** GAME SCREEN ******`)
+
     const [timestamp, setTimestamp] = useState(Date.now())
-    const [game, setGame] = useState(null);
+    const [game, setGame] = useState(route.params.initialGame);
     const [alertMessage, setAlertMessage] = useState(null);
     const [selectedCard, setSelectedCard] = useState(null);
-    const [playerId, setPlayerId] = useState(1);
-
-    if (game === null) {
-        const startGameOptions = {
-            players: [
-                { playerId: 1, nickname: 'scheifs', color: 'skyblue' },
-                { playerId: 2, nickname: 'AI', color: 'orange' },
-                { playerId: 3, nickname: 'AI', color: 'teal' }
-            ]
-        }
-        const newGame = gameService.startGame(startGameOptions);
-        setGame(newGame);
-        setTimestamp(Date.now());
-    }
+    const [playerId, setPlayerId] = useState(0); // TODO: do not hardcode 0 in future
 
     function cardButtonHandler(card) {
         if (card === 'Hint') {
@@ -36,7 +28,7 @@ function GameScreen() {
             setAlertMessage(move);
             setSelectedCard(null);
         } else if (card === 'Draw') {
-            if (game.players[playerId-1].cards.length === 4) {
+            if (game.players[playerId].cards.length === 4) {
                 setAlertMessage("Can't draw with 4 cards")
                 setTimestamp(Date.now())
                 setSelectedCard(null);
@@ -64,8 +56,12 @@ function GameScreen() {
         if (selectedCard !== null) {
             gameService.processMove(game, { move: 'Play', playerId: playerId, card: selectedCard, boardNumber: boardNum });
             setGame(game);
-            setAlertMessage(null);
-            setSelectedCard(null);
+            if (game.gameOver) {                
+                setAlertMessage(`Game over, ${game.winningColor} won`)
+            } else {
+                setAlertMessage(null);
+                setSelectedCard(null);
+            }            
         }
     }
 
@@ -102,31 +98,55 @@ function GameScreen() {
         })
     }
 
-    function prettyPrintCards(cards) {
+    function prettyPrintCards(player) {
 
-        if (cards) {
-            let myCards = '[';
-            cards.forEach(card => {
-                myCards = myCards + card + ', ';
-            })
-            myCards = myCards.substring(0, myCards.length - 2) + ']';
-            return myCards;
+        function getCard(card) {
+            return card === undefined ? ' - ' : `${card}`
+        }
+
+        if (player.nickname === 'me') {
+            return `[${getCard(player.cards[0])} ${getCard(player.cards[1])} ${getCard(player.cards[2])} ${getCard(player.cards[3])}]`
+        } else {
+            switch (player.cards.length) {
+                case 0: return '[  -   -    -    - ]'
+                case 1: return '[  *   -    -    - ]'
+                case 2: return '[  *   *    -    - ]'
+                case 3: return '[  *   *    *    - ]'
+                case 4: return '[  *   *    *    * ]'
+            }
         }
 
     }
 
-    function drawInformation() {
+    function drawPlayerInformation() {
 
-        return (<>
-            <View style={styles.infoContainer}>
+        return (
+            <View style={styles.infoPlayerContainer}>
                 {game?.players.map(player => {
                     return (
-                        <Text key={player.playerId}>{player.playerId} - {player.color} - {player.nickname} - {prettyPrintCards(player.cards)}</Text>)
+                        <Text style={{ color: player.color }} key={player.playerId}>{prettyPrintCards(player)} - {player.nickname}</Text>)
                 })}
-            </View>
-            <View style={styles.infoContainer}>
-                <Text>PlayersIdTurn: {game?.playersTurnId}</Text>
-            </View></>)
+            </View>)
+
+    }
+
+    function renderItem({ item: move }) {
+        switch (move.move) {
+            case 'Play': return <Text style={{ fontSize: 11 }} key={move.turnNumber}>{move.turnNumber} - {move.nickname} - {move.color} - {move.move} - {move.card} =&gt; {move.boardNumber}</Text>
+            case 'Draw': return <Text style={{ fontSize: 11 }} key={move.turnNumber}>{move.turnNumber} - {move.nickname} - {move.color} - {move.move}</Text>
+        }
+    }
+
+    function drawGameHistory() {
+        return (
+
+            <FlatList
+                style={styles.infoGameHistoryContainer}
+                data={game?.moves}
+                renderItem={renderItem}
+                keyExtractor={item => item.turnNumber}
+                persistentScrollbar={true}
+            />)
 
     }
 
@@ -158,22 +178,22 @@ function GameScreen() {
         return (
             <View style={styles.buttonsContainer}>
                 <View style={styles.buttonContainer}>
-                    {game?.players[playerId-1].cards.length >= 1 && <GameSquareButton height={35} onPress={cardButtonHandler} color="#4c669f">{game.players[playerId-1].cards[0]}</GameSquareButton>}
+                    {game?.players[playerId].cards.length >= 1 && <GameSquareButton height={35} onPress={cardButtonHandler} textColor="white" color="black">{game.players[playerId].cards[0]}</GameSquareButton>}
                 </View>
                 <View style={styles.buttonContainer}>
-                    {game?.players[playerId-1].cards.length >= 2 && <GameSquareButton height={35} onPress={cardButtonHandler} color="#4c669f">{game.players[playerId-1].cards[1]}</GameSquareButton>}
+                    {game?.players[playerId].cards.length >= 2 && <GameSquareButton height={35} onPress={cardButtonHandler} textColor="white" color="black">{game.players[playerId].cards[1]}</GameSquareButton>}
                 </View>
                 <View style={styles.buttonContainer}>
-                    {game?.players[playerId-1].cards.length >= 3 && <GameSquareButton height={35} onPress={cardButtonHandler} color="#4c669f">{game.players[playerId-1].cards[2]}</GameSquareButton>}
+                    {game?.players[playerId].cards.length >= 3 && <GameSquareButton height={35} onPress={cardButtonHandler} textColor="white" color="black">{game.players[playerId].cards[2]}</GameSquareButton>}
                 </View>
                 <View style={styles.buttonContainer}>
-                    {game?.players[playerId-1].cards.length >= 4 && <GameSquareButton height={35} onPress={cardButtonHandler} color="#4c669f">{game.players[playerId-1].cards[3]}</GameSquareButton>}
+                    {game?.players[playerId].cards.length >= 4 && <GameSquareButton height={35} onPress={cardButtonHandler} textColor="white" color="black">{game.players[playerId].cards[3]}</GameSquareButton>}
                 </View>
                 <View style={styles.buttonContainer}>
-                    <GameSquareButton height={35} onPress={cardButtonHandler} color="#4c669f">Draw</GameSquareButton>
+                    <GameSquareButton height={35} onPress={cardButtonHandler} textColor="white" color="gray">Draw</GameSquareButton>
                 </View>
                 <View style={styles.buttonContainer}>
-                    <GameSquareButton height={35} onPress={cardButtonHandler} color="#4c669f">Hint</GameSquareButton>
+                    <GameSquareButton height={35} onPress={cardButtonHandler} textColor="white" color="gray">Hint</GameSquareButton>
                 </View>
             </View>
         );
@@ -187,8 +207,11 @@ function GameScreen() {
                 showProgress={false}
                 message={getAlertMessage(alertMessage)}
             />
+            <View style={styles.infoContainer}>
+                {drawPlayerInformation()}
+                {drawGameHistory()}
+            </View>
 
-            {drawInformation()}
             {drawBoard()}
             {drawCards()}
 
@@ -202,8 +225,17 @@ const styles = StyleSheet.create({
         width: '100%',
         height: '100%'
     },
+    infoPlayerContainer: {
+
+    },
+    infoGameHistoryContainer: {
+        paddingLeft: 16
+    },
     infoContainer: {
-        backgroundColor: 'gray'
+        backgroundColor: 'white',
+        paddingTop: 4,
+        flexDirection: 'row',
+        height: 130
     },
     boardContainer: {
         flex: 1,
@@ -217,7 +249,8 @@ const styles = StyleSheet.create({
     },
     buttonsContainer: {
         flexDirection: 'row',
-        backgroundColor: 'gray',
+        backgroundColor: 'white',
+        paddingVertical: 4
     },
     boardRowContainer: {
         flex: 1,

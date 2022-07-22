@@ -1,4 +1,5 @@
 import * as fiveai from 'fiveai';
+import * as boardService from './board-service';
 
 const __emptyBoard__ = [
     [{ num: 73, x: 0, y: 0 },
@@ -135,10 +136,10 @@ function dealToPlayers(game) {
 
 function startGame(startGameOptions) {
     let game = {
-        lastUpdated: new Date(),
+        lastUpdated: JSON.stringify(new Date()),
         deck: getNewShuffledDeck(),
         players: startGameOptions.players,
-        playersTurnId: 1,
+        playersTurnId: 0,
         moves: [],
         turnNumber: 1,
         board: JSON.parse(JSON.stringify(__emptyBoard__))
@@ -173,40 +174,24 @@ function drawCard(game, player) {
 
 function updatePlayersTurn(game, currentPlayerIdTurn) {
 
-    if (currentPlayerIdTurn + 1 > game.players.length) {
-        game.playersTurnId = 1;
+    if (currentPlayerIdTurn + 1 >= game.players.length) {
+        game.playersTurnId = 0;
     } else {
         game.playersTurnId = currentPlayerIdTurn + 1;
     }
     console.log(`updating from players turn from ${currentPlayerIdTurn} to ${game.playersTurnId}`);
 }
 
-// {
-//     player: playerId,
-//     move: "Draw"
-// }
-
-// {
-//     player: playerId,
-//     move: "Play",
-//     card: movePayload.card,
-//     boardNumber: movePayload.boardNumber
-// })
-
 function forceAImove(game) {
 
-    // let done = false;
-    // while (!done) {
-        console.log('ForceAIMove for playerId', game.playersTurnId);
-        const player = getPlayer(game, game.playersTurnId);
-        if (player.nickname === 'AI') {
-            const move = fiveai.getMove(game, game.playersTurnId);
-            processMove(game, move);
-        } else {
-            // done = true;
-            console.log(`ForceAIMove done as ${player.nickname} is not an AI`)
-        }
-    // }
+    console.log('ForceAIMove for playerId', game.playersTurnId);
+    const player = getPlayer(game, game.playersTurnId);
+    if (player.nickname === 'AI') {
+        const move = fiveai.getMove(game, game.playersTurnId);
+        processMove(game, move);
+    } else {
+        console.log(`ForceAIMove done as ${player.nickname} is not an AI`)
+    }
 
 }
 
@@ -215,12 +200,34 @@ function processMove(game, { playerId, move, card, boardNumber }) {
     console.log(`Process move for playerId: ${playerId} ${move} ${card} ${boardNumber}`);
     const player = getPlayer(game, playerId);
     if (move === 'Play') {
-        const color = player.color;
-        updateBoard(game, boardNumber, color);
+        game.moves.unshift({
+            playerId,
+            move,
+            card,
+            boardNumber,
+            turnNumber: game.moves.length+1,
+            nickname: player.nickname,
+            color: player.color
+        });
+        updateBoard(game, boardNumber, player.color);
         removeCardFromPlayer(player, card);
+        const { isGameOver, winningColor } = boardService.isGameOver(game.board);
+        if (isGameOver) {
+            game.gameOver = true;
+            game.winningColor = winningColor;
+            console.log(`Game over winning color is ${winningColor}`)
+        }
     } else if (move === 'Draw') {
+        game.moves.unshift({
+            playerId,
+            move,
+            turnNumber: game.moves.length+1,
+            nickname: player.nickname,
+            color: player.color
+        });
         drawCard(game, player);
     }
+    game.turnNumber++;
     updatePlayersTurn(game, playerId);
     forceAImove(game);
     return game;

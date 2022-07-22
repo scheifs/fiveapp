@@ -56,16 +56,16 @@ function LoginScreen({ setIsLoggedIn }) {
     async function onSubmitHandler() {
 
         console.log(`onSubmitHandler ${emailAddress} ${password}`);
-        setLoading(() => true);
+        setLoading(true);
 
         try {
             const data = await loginService.login(emailAddress, password);
             console.log(data);
             await storageService.set('user', JSON.stringify(data));
-            setIsLoggedIn(() => true);
+            setIsLoggedIn(true);
         } catch (err) {
             console.log(err);
-            setLoading(() => false);
+            setLoading(false);
         }
 
     }

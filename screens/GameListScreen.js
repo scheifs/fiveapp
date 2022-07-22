@@ -1,40 +1,29 @@
-import { View, Text, StyleSheet, Button } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useState, useLayoutEffect, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Login from './LoginScreen';
 import * as storageService from '../services/storage-service';
 
-function GameListScreen({ navigation }) {
+function GameListScreen() {
 
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [user, setUser] = useState(null);
 
     useEffect(() => {
 
         async function getData() {
-            const user = await storageService.get('user');
-            console.log('use effect user', user);
-            if (!user) {
-                setIsLoggedIn(() => false);
-            }
+            
+                const userJson = await storageService.get('user');
+                const user = JSON.parse(userJson);
+                console.log(user);
+                if (user) {
+                    setIsLoggedIn(true);
+                    setUser(user);
+                }            
         }
         getData();
 
-    });
-
-    // useLayoutEffect(() => {
-    //     console.log('use effect');
-    //     if (isLoggedIn) {
-    //         navigation.setOptions({
-    //             // tabBarStyle: {
-    //             //     position: 'abolsute'
-    //             // },
-    //             tabBarStyle: {
-    //                 display: 'flex'
-    //             }
-    //         });
-    //     }
-
-    // }, [isLoggedIn]);
+    }, [isLoggedIn]);
 
     if (!isLoggedIn) {
         return (

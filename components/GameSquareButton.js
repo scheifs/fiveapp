@@ -10,7 +10,7 @@ function GameSquareButton(props) {
     return (
         <Pressable style={[styles.pressableContainer, { height: props.height || '100%' }]} onPress={onPressHandler}>
             <View style={[styles.container, { backgroundColor: props.color || 'white'}]}>
-                <Text style={styles.textContainer}>{props.children}</Text>
+                <Text style={{ fontSize: 22, color: props.textColor || 'black'}}>{props.children}</Text>
             </View>
         </Pressable>
     );
@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
         paddingBottom: 1
     },
     textContainer: {
-        fontSize: 22
+        fontSize: 22,
     }
 });
 

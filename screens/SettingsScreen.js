@@ -10,20 +10,26 @@ function SettingsScreen() {
     useEffect(() => {
         async function getData() {
             const user = await storageService.get('user');
-            setUser(() => user);
+            console.log(user);
+            if (user) {
+                const prettyUser = JSON.stringify(JSON.parse(user), null, 4);
+                console.log(prettyUser);
+                setUser(JSON.parse(user));
+            }
         }
         getData();
-    }, [user])
+    }, [])
 
     async function resetButtonHandler() {
         await storageService.removeItem('user');
         console.log(await storageService.get('user'))
+        setUser(null);
     }
 
     return (
         <LinearGradient colors={['#4c669f', 'purple']} style={styles.linearGradient}>
 
-         <Text>{user}</Text>
+         <Text>{JSON.stringify(user, null, 4)}</Text>
          <Button title="Reset" onPress={resetButtonHandler} />
          
         </LinearGradient>

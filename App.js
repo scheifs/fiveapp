@@ -6,6 +6,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import SettingsScreen from './screens/SettingsScreen';
 import FriendsScreen from './screens/FriendsScreen';
 import GameScreen from './screens/GameScreen';
@@ -22,6 +23,7 @@ export default function App() {
     <>
       <NavigationContainer>
         <StatusBar barStyle='dark-content' />
+        
         <Tab.Navigator
           screenOptions={{
             tabBarStyle: {
@@ -37,19 +39,19 @@ export default function App() {
               <FontAwesome5 name="home" color='black' size={size} />
             ),
             tabBarLabel: ({ focused, color }) =>
-              (<Text style={{ color: "black" }}>Game</Text>)
-          }} name="Game" component={GameScreen} />
+              (<Text style={{ color: "black" }}>Home</Text>)
+          }} name="Home" component={GameListScreen} />
           <Tab.Screen options={{
             headerShown: false,
             // tabBarStyle: {
             //   display: 'none'
             // },
             tabBarIcon: ({ color, size }) => (
-              <FontAwesome5 name="home" color='black' size={size} />
+              <MaterialCommunityIcons name="gamepad" color='black' size={size} />              
             ),
             tabBarLabel: ({ focused, color }) =>
-              (<Text style={{ color: "black" }}>Home</Text>)
-          }} name="Home" component={GameListScreen} />
+              (<Text style={{ color: "black" }}>Game</Text>)
+          }} name="Game" component={GameScreen} />
           <Tab.Screen options={{
             headerShown: false,
             tabBarIcon: ({ color, size }) => (
