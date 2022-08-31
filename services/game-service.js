@@ -1,5 +1,6 @@
 import * as fiveai from 'fiveai';
 import * as boardService from './board-service';
+import * as storageService from './storage-service';
 
 const __emptyBoard__ = [
     [{ num: 73, x: 0, y: 0 },
@@ -136,6 +137,7 @@ function dealToPlayers(game) {
 
 function startGame(startGameOptions) {
     let game = {
+        id: Date.now(),
         lastUpdated: JSON.stringify(new Date()),
         deck: getNewShuffledDeck(),
         players: startGameOptions.players,

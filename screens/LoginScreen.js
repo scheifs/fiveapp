@@ -60,7 +60,6 @@ function LoginScreen({ setIsLoggedIn }) {
 
         try {
             const data = await loginService.login(emailAddress, password);
-            console.log(data);
             await storageService.set('user', JSON.stringify(data));
             setIsLoggedIn(true);
         } catch (err) {

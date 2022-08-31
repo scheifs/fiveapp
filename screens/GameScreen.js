@@ -22,9 +22,9 @@ function GameScreen() {
 
     function cardButtonHandler(card) {
         if (card === 'Hint') {
-            console.log(JSON.stringify(game.players, null, 4));
+            // console.log(JSON.stringify(game.players, null, 4));
             const move = fiveai.getMove(game, playerId);
-            console.log(`AI hint ${JSON.stringify(move)}`)
+            // console.log(`AI hint ${JSON.stringify(move)}`)
             setAlertMessage(move);
             setSelectedCard(null);
         } else if (card === 'Draw') {
@@ -223,7 +223,8 @@ const styles = StyleSheet.create({
     linearGradient: {
         flex: 1,
         width: '100%',
-        height: '100%'
+        height: '100%',
+        paddingTop: 20
     },
     infoPlayerContainer: {
 

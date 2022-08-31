@@ -41,15 +41,24 @@ function NewGameScreen({ navigation }) {
         getUser();
     }, [user, players])
 
-    function startGameHandler() {
-        console.log(`Start game handler with players `, players);
+    async function startGameHandler() {
+        // console.log(`Start game handler with players `, players);
         const startGameOptions = {
             players: initPlayers,
         }
         const game = gameService.startGame(startGameOptions);
         console.log('----------------------------')
-        console.log(game);
+        console.log(`Starting game with id: ${game.id}`);
         console.log('----------------------------')
+        const currentGames = JSON.parse(await storageService.get("games"));
+        console.log(`Current games: ${currentGames}`)
+        if (currentGames === null) {
+            await storageService.set("games", JSON.stringify([game.id]));
+        } else {
+            currentGames.push(game.id);
+            await storageService.set("games", JSON.stringify(currentGames));
+        }
+        
         navigation.navigate('Game', {
             initialGame: game
         });
@@ -80,7 +89,8 @@ const styles = StyleSheet.create({
     linearGradient: {
         flex: 1,
         width: '100%',
-        height: '100%'
+        height: '100%',
+        paddingTop: 20
     },
     gameContainer: {
         flex: 1

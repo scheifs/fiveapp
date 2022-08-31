@@ -15,13 +15,12 @@ export default function App() {
 
   const Tab = createBottomTabNavigator();
 
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  console.log(`Platform: ${Platform.OS} Status Bar Height: ${StatusBar.currentHeight}`)
+  // console.log(`Platform: ${Platform.OS} Status Bar Height: ${StatusBar.currentHeight}`)
 
   return (
     <>
       <NavigationContainer>
+    
         <StatusBar barStyle='dark-content' />
         
         <Tab.Navigator
@@ -77,6 +76,7 @@ export default function App() {
               (<Text style={{ color: "black" }}>Settings</Text>)
           }} name="Settings" component={SettingsScreen} />
         </Tab.Navigator>
+      
       </NavigationContainer>
     </>
   );
@@ -84,10 +84,11 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'blue'
+  navigationContainer: {
+    marginTop: 20
+    // flex: 1,
+    // alignItems: 'center',
+    // justifyContent: 'center',
+    // backgroundColor: 'blue'
   },
 });

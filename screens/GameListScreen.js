@@ -15,7 +15,7 @@ function GameListScreen() {
             
                 const userJson = await storageService.get('user');
                 const user = JSON.parse(userJson);
-                console.log(user);
+                // console.log(user);
                 if (user) {
                     setIsLoggedIn(true);
                     setUser(user);
@@ -50,7 +50,8 @@ const styles = StyleSheet.create({
         width: '100%',
         height: '100%',
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        paddingTop: 20
     },
     gameListContainer: {
         flex: 1
