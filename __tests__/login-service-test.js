@@ -40,3 +40,35 @@ test('login service -- failure', async () => {
     await expect(loginService.login('emailAddress', 'password')).rejects.toBe('error during login');
 
 });
+
+test('register new user -- success', async () => {
+
+    const responseJson = {
+        hi: 'hi'
+    }
+    
+    const fetchRes = {
+        ok: true,
+        json: jest.fn(() => responseJson)
+    }
+    global.fetch = jest.fn(() => fetchRes);
+    
+
+    const res = await loginService.registerNewUser('email','pwd');
+
+    expect(responseJson).toBe(res);
+
+});
+
+test('register new user -- failure', async () => {
+    
+    const fetchRes = {
+        ok: false,
+    }
+    global.fetch = jest.fn(() => fetchRes);
+    
+
+    await expect(loginService.registerNewUser('email','pwd')).rejects.toBe('error during login')
+
+
+});
