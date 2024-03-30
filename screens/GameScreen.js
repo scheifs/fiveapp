@@ -14,14 +14,16 @@ function GameScreen() {
 
     console.log(`***** GAME SCREEN ******`)
 
-    const [timestamp, setTimestamp] = useState(Date.now())
+    const [timestamp, setTimestamp] = useState(Date.now()) // used to redraw state
     const [game, setGame] = useState(route.params.initialGame);
     const [alertMessage, setAlertMessage] = useState(null);
     const [selectedCard, setSelectedCard] = useState(null);
     const [playerId, setPlayerId] = useState(0); // TODO: do not hardcode 0 in future
 
     function cardButtonHandler(card) {
-        if (card === 'Hint') {
+        if (game.gameOver) {
+            setAlertMessage(`Game over can't move anymore`);
+        } else if (card === 'Hint') {
             // console.log(JSON.stringify(game.players, null, 4));
             const move = fiveai.getMove(game, playerId);
             // console.log(`AI hint ${JSON.stringify(move)}`)
@@ -57,7 +59,7 @@ function GameScreen() {
             gameService.processMove(game, { move: 'Play', playerId: playerId, card: selectedCard, boardNumber: boardNum });
             setGame(game);
             if (game.gameOver) {                
-                setAlertMessage(`Game over, ${game.winningColor} won`)
+                setAlertMessage(`Game over, ${game.winningColor} won`);
             } else {
                 setAlertMessage(null);
                 setSelectedCard(null);
@@ -99,23 +101,7 @@ function GameScreen() {
     }
 
     function prettyPrintCards(player) {
-
-        function getCard(card) {
-            return card === undefined ? ' - ' : `${card}`
-        }
-
-        if (player.nickname === 'me') {
-            return `[${getCard(player.cards[0])} ${getCard(player.cards[1])} ${getCard(player.cards[2])} ${getCard(player.cards[3])}]`
-        } else {
-            switch (player.cards.length) {
-                case 0: return '[  -   -    -    - ]'
-                case 1: return '[  *   -    -    - ]'
-                case 2: return '[  *   *    -    - ]'
-                case 3: return '[  *   *    *    - ]'
-                case 4: return '[  *   *    *    * ]'
-            }
-        }
-
+        return `[${player.cards.length} cards]`;
     }
 
     function drawPlayerInformation() {
@@ -200,7 +186,7 @@ function GameScreen() {
     }
 
     return (
-        <LinearGradient colors={['#4c669f', 'purple']} style={styles.linearGradient}>
+        <LinearGradient colors={['white', 'white']} style={styles.linearGradient}>
 
             <AwesomeAlert
                 show={alertMessage !== null}
@@ -234,9 +220,9 @@ const styles = StyleSheet.create({
     },
     infoContainer: {
         backgroundColor: 'white',
-        paddingTop: 4,
+        paddingTop: 32,
         flexDirection: 'row',
-        height: 130
+        height: 140
     },
     boardContainer: {
         flex: 1,

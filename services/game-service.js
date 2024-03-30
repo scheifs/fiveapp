@@ -230,8 +230,10 @@ function processMove(game, { playerId, move, card, boardNumber }) {
         drawCard(game, player);
     }
     game.turnNumber++;
-    updatePlayersTurn(game, playerId);
-    forceAImove(game);
+    if (!game.gameOver) {
+        updatePlayersTurn(game, playerId);
+        forceAImove(game);
+    }
     return game;
 
 }
