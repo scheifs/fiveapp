@@ -8,17 +8,17 @@ function SettingsScreen() {
     useEffect(() => {
 
         async function getData() {
-   
+
             const games = await storageService.get('games');
             console.log(`Current Games: ${games}`);
-    
+
             const user = await storageService.get('user');
             console.log(`User: ${user}`);
             if (user) {
                 const prettyUser = JSON.stringify(JSON.parse(user), null, 4);
                 console.log(prettyUser);
             }
-            
+
         }
         getData();
     })
@@ -38,9 +38,9 @@ function SettingsScreen() {
     return (
         <LinearGradient colors={['#4c669f', 'purple']} style={styles.linearGradient}>
 
-         <Button title="Reset" onPress={resetButtonHandler} />
-         <Button title="GetData" onPress={getDataButtonHandler} />
-         
+            <Button title="Reset" onPress={resetButtonHandler} />
+            <Button title="GetData" onPress={getDataButtonHandler} />
+
         </LinearGradient>
     )
 
@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
         height: '100%',
         paddingTop: 20
     },
-    
+
 });
 
 export default SettingsScreen;

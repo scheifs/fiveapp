@@ -25,10 +25,8 @@ function GameScreen() {
             setAlertMessage(null);
             setSelectedCard(null);
         } else if (card === 'Hint') {
-            // console.log(JSON.stringify(game.players, null, 4));
-            const move = fiveai.getMove(game, playerId);
-            // console.log(`AI hint ${JSON.stringify(move)}`)
-            setAlertMessage(move);
+            const { move, card, boardNumber } = fiveai.getMove(game, playerId);
+            move === 'Draw' ? setAlertMessage('Draw') : setAlertMessage(`Card ${card} to ${boardNumber}`);
             setSelectedCard(null);
         } else if (card === 'Draw') {
             if (game.players[playerId].cards.length === 4) {
@@ -59,30 +57,30 @@ function GameScreen() {
         if (selectedCard !== null) {
             gameService.processMove(game, { move: 'Play', playerId: playerId, card: selectedCard, boardNumber: boardNum });
             setGame(game);
-            if (game.gameOver) {                
+            if (game.gameOver) {
                 setAlertMessage(`Game over, ${game.winningColor} won`);
             } else {
                 setAlertMessage(null);
                 setSelectedCard(null);
-            }            
+            }
         }
     }
 
-    function getAlertMessage(hint) {
-        if (hint === null) {
-            return 'None';
-        } else if (hint.move) {
-            if (hint.move === 'Draw') {
-                return 'Draw';
-            }
-            if (hint.move === 'Play') {
-                return `Card ${hint.card} to ${hint.boardNumber}`
-            }
-        } else {
-            return hint;
-        }
+    // function getAlertMessage(hint) {
+    //     if (hint === null) {
+    //         return 'None';
+    //     } else if (hint.move) {
+    //         if (hint.move === 'Draw') {
+    //             return 'Draw';
+    //         }
+    //         if (hint.move === 'Play') {
+    //             return `Card ${hint.card} to ${hint.boardNumber}`
+    //         }
+    //     } else {
+    //         return hint;
+    //     }
 
-    }
+    // }
 
     function drawRow(rowNumber) {
         if (game === null || game.board === null) {
@@ -192,7 +190,7 @@ function GameScreen() {
             <AwesomeAlert
                 show={alertMessage !== null}
                 showProgress={false}
-                message={getAlertMessage(alertMessage)}
+                message={alertMessage}
             />
             <View style={styles.infoContainer}>
                 {drawPlayerInformation()}
