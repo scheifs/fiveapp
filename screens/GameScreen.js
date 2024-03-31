@@ -22,7 +22,8 @@ function GameScreen() {
 
     function cardButtonHandler(card) {
         if (game.gameOver) {
-            setAlertMessage(`Game over can't move anymore`);
+            setAlertMessage(null);
+            setSelectedCard(null);
         } else if (card === 'Hint') {
             // console.log(JSON.stringify(game.players, null, 4));
             const move = fiveai.getMove(game, playerId);
